@@ -1,0 +1,246 @@
+<template>
+
+    <lightning-card title="Calendar App">
+
+        <div class="container">
+
+            <!-- LEFT PANEL -->
+
+            <div class="sidebar">
+
+                <div class="event-list-box">
+
+                    <h2 class="sidebar-title">
+                        Upcoming Events
+                    </h2>
+                    <lightning-combobox
+                       label="Filter Events"
+                      value={selectedFilter}
+                      options={filterOptions}
+                      onchange={handleFilterChange}>
+                    </lightning-combobox>
+
+                     <br/>
+
+                    <template
+                        for:each={upcomingEvents}
+                        for:item="event">
+
+                        <div
+                            key={event.Id}
+                            class="event-item"
+                            data-date={event.Start_DateTime__c}
+                            onclick={goToEvent}>
+
+                            <div class="event-date">
+
+                                <lightning-formatted-date-time
+                                    value={event.Start_DateTime__c}
+                                    year="numeric"
+                                    month="short"
+                                    day="2-digit">
+                                </lightning-formatted-date-time>
+
+                            </div>
+
+                            <div class="event-name">
+                                {event.Name}
+                            </div>
+
+                        </div>
+
+                    </template>
+
+                </div>
+
+            </div>
+
+            <!-- RIGHT PANEL -->
+
+            <div class="main-calendar">
+
+                <div class="calendar"></div>
+
+            </div>
+
+        </div>
+
+    </lightning-card>
+
+    <!-- MODAL -->
+
+    <template if:true={showModal}>
+
+        <section
+            role="dialog"
+            tabindex="-1"
+            class="slds-modal slds-fade-in-open">
+
+            <div class="slds-modal__container">
+
+                <header class="slds-modal__header">
+
+                    <h2 class="slds-text-heading_medium">
+                        Create Event
+                    </h2>
+
+                </header>
+
+                <div class="slds-modal__content slds-p-around_medium">
+
+                    <lightning-input
+                        label="Event Name"
+                        value={eventName}
+                        onchange={handleNameChange}>
+                    </lightning-input>
+
+                    <lightning-input
+                        type="datetime"
+                        label="Start Date"
+                        value={startDate}
+                        onchange={handleStartChange}>
+                    </lightning-input>
+
+                    <lightning-input
+                        type="datetime"
+                        label="End Date"
+                        value={endDate}
+                        onchange={handleEndChange}>
+                    </lightning-input>
+
+                </div>
+
+                <footer class="slds-modal__footer">
+
+                    <lightning-button
+                        label="Cancel"
+                        onclick={closeModal}>
+                    </lightning-button>
+
+                    <lightning-button
+                        variant="brand"
+                        label="Save"
+                        onclick={saveEvent}>
+                    </lightning-button>
+
+                </footer>
+
+            </div>
+
+        </section>
+
+        <div class="slds-backdrop slds-backdrop_open"></div>
+
+    </template>
+    <template if:true={showEventDetails}>
+
+    <section
+        role="dialog"
+        tabindex="-1"
+        class="slds-modal slds-fade-in-open">
+
+        <div class="slds-modal__container">
+
+            <header class="slds-modal__header">
+
+                <h2 class="slds-text-heading_medium">
+                    Event Details
+                </h2>
+
+            </header>
+
+            <div class="slds-modal__content slds-p-around_medium">
+
+    <template if:false={isEditing}>
+
+        <p>
+            <b>Title:</b>
+            {selectedEventTitle}
+        </p>
+
+        <br/>
+
+        <p>
+            <b>Start:</b>
+            {selectedStart}
+        </p>
+
+        <br/>
+
+        <p>
+            <b>End:</b>
+            {selectedEnd}
+        </p>
+
+    </template>
+
+    <template if:true={isEditing}>
+
+        <lightning-input
+            label="Event Name"
+            value={selectedEventTitle}
+            onchange={handleEditTitle}>
+        </lightning-input>
+
+        <lightning-input
+            type="datetime"
+            label="Start Date"
+            value={selectedStart}
+            onchange={handleEditStart}>
+        </lightning-input>
+
+        <lightning-input
+            type="datetime"
+            label="End Date"
+            value={selectedEnd}
+            onchange={handleEditEnd}>
+        </lightning-input>
+
+    </template>
+
+</div>
+
+            <footer class="slds-modal__footer">
+
+    <lightning-button
+        label="Close"
+        onclick={closeEventModal}>
+    </lightning-button>
+
+    <template if:false={isEditing}>
+
+        <lightning-button
+            variant="brand"
+            label="Edit"
+            onclick={enableEdit}>
+        </lightning-button>
+
+    </template>
+
+    <template if:true={isEditing}>
+
+        <lightning-button
+            variant="success"
+            label="Save"
+            onclick={handleUpdateEvent}>
+        </lightning-button>
+
+    </template>
+
+    <lightning-button
+        variant="destructive"
+        label="Delete"
+        onclick={handleDeleteEvent}>
+    </lightning-button>
+
+</footer>
+
+        </div>
+
+    </section>
+
+    <div class="slds-backdrop slds-backdrop_open"></div>
+
+</template>
+
+</template>
